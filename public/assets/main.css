@@ -1,0 +1,32 @@
+window {
+    background: #ffffff;
+}
+
+#viewport {
+    position: relative;
+    height: 100%;
+    width: 100%;
+}
+
+#background-canvas { 
+    background: #000000; 
+    display: block; 
+    margin: 0 auto;
+    width: 100%;
+    position: absolute;
+    z-index: 1;
+}
+
+#item-canvas {
+    background-color: transparent;
+    width: 100%;
+    position: absolute;
+    z-index: 2;
+}
+
+#player-canvas {
+    background-color: transparent;
+    width: 100%;
+    position: absolute; 
+    z-index: 3;
+}
