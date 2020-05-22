@@ -18,5 +18,12 @@ window.game.utils = {
             animationArray.push(spriteAnimation);
         }
         return animationArray;
+    },
+    arrayToFlatMap: (array) => {
+        const itemMap = {}
+        array.forEach( element => {
+            itemMap[element.id] = element;
+        })
+        return itemMap;
     } 
 };

@@ -1,15 +1,17 @@
 const metaChest = window.game.items.metaData.chest;
 const utilities = window.game.utils;
-console.log(metaChest)
+
 window.game.items.itemIndex = {
     chestRed: {
+        type: 'chest',
         src: 'http://localhost:3000/Items/chests.png',
         metaData: metaChest,
-        animations: utilities.returnAnimationArray(metaChest, 1)
+        animations:{ open: utilities.returnAnimationArray(metaChest, 1)}
     },
     chestWood: {
+        type: 'chest',
         src: 'http://localhost:3000/Items/chests.png',
         metaData: metaChest,
-        animations: utilities.returnAnimationArray(metaChest, 5)
+        animations:{ open: utilities.returnAnimationArray(metaChest, 5)}
     }
 }

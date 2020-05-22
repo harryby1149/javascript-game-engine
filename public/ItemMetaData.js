@@ -8,11 +8,7 @@ window.game.items = {
             columns: 12,
             rows: 8,
             sPerAPerRow: 3,
-            sPerAPerColumn: 4,
-            status: {
-                closed: 0,
-                open: 11
-            }                                                                                                                       
+            sPerAPerColumn: 4                                                                                                                     
         }
     }
 };

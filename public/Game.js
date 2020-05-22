@@ -1,6 +1,10 @@
-const maps = window.game.maps;
-const utils = window.game.utils;
-let state = window.game.state;
+const game = window.game;
+const maps = game.maps;
+const utils = game.utils;
+let state = game.state;
+state.mode = 'exploration';
+state.currentAnimations = {};
+state.currentAnimations.items = {}
 const canvas = document.getElementById('background-canvas');
 canvas.width = canvas.clientWidth;
 canvas.height = 900;
@@ -16,96 +20,132 @@ const itemCtx = itemCanvas.getContext('2d');
 let scale;
 state.pX = canvas.width/2;
 state.pY = canvas.height * (3/5);
-state.dPX = 4;
-state.dPY = 4;
+state.previousPX = state.pX;
+state.previousPY = state.pX;
+state.dPX = 5;
+state.dPY = 5;
 state.scaledPW  = 50;
 state.scaledPH = 50;
 const halfSPW = scaledPW /2;
 const halfSPH = scaledPH /2
-let transition = true;
-let mapDrawn = false;
-state.currentMap = maps.estateSample;
-let currentBackgroundImage = new Image();
-currentBackgroundImage.onload = function() {
-    const map = state.currentMap.mapDimensions;
-    const imgRatio = parseInt(map.width) / parseInt(map.height);
+state.transition = true;
+let frameCount = 0;
+state.map = {};
+state.map.currentMap = maps.estateSample;
+state.map.image = new Image();
+state.map.image.onload = function() {
+    const map = state.map.currentMap;
+    const mapDimensions = map.mapDimensions;
+    const imgRatio = parseInt(mapDimensions.width) / parseInt(mapDimensions.height);
     let width = canvas.clientWidth;
     let height = width / imgRatio
     if(height > canvas.clientHeight) {
         height = canvas.clientHeight
         width = height * imgRatio;
     }
-    if (state.currentMap.mapDimensions.width <= canvas.width && state.currentMap.mapDimensions.height <= canvas.height){
+    if (mapDimensions.width <= canvas.width && mapDimensions.height <= canvas.height){
         scale = 1
     } else {
-        scale = (canvas.width * canvas.height) / (state.currentMap.mapDimensions.width * state.currentMap.mapDimensions.height)
+        scale = (canvas.width * canvas.height) / (mapDimensions.width * mapDimensions.height)
     }
     state.scaledPW *= scale;
     state.scaledPH *= scale;
-    state.currentMap.display = {
-        minX : (canvas.width - map.width) / 2,
-        minY : (canvas.height - map.height) / 2,
-        maxX : canvas.width - ((canvas.width - map.width) / 2),
-        maxY : canvas.height - ((canvas.height - map.height) / 2)
+    map.display = {
+        minX : (canvas.width - (mapDimensions.width <= 1200 ? mapDimensions.width : 1200) ) / 2,
+        minY : (canvas.height - (mapDimensions.height <= 900 ? mapDimensions.height : 900)) / 2,
+        maxX : canvas.width - ((canvas.width - (mapDimensions.width <= 1200 ? mapDimensions.width : 1200)) / 2),
+        maxY : canvas.height - ((canvas.height - (mapDimensions.height <= 900 ? mapDimensions.height : 900)) / 2)
     }
-    ctx.drawImage( currentBackgroundImage, state.currentMap.display.minX , state.currentMap.display.minY, width, height);
-    state.bounds = state.currentMap.mapBounds;
-    drawItemLayer();
-    transition = false;
-    mapDrawn = true;
+    ctx.drawImage(state.map.image, map.display.minX , map.display.minY, width, height);
+    state.bounds = []
+    map.mapBounds.forEach(boundary => state.bounds.push(boundary));
+    state.currentAnimations.items = Object.assign({}, state.currentAnimations.items, map.mapComponents)
+    console.log(state.currentAnimations.items)
+    drawItems();
+    state.transition = false;
+    draw()
 }
-currentBackgroundImage.src = state.currentMap.url;
 
-function drawplayerLayer() {    
-        playerCtx.clearRect(0, 0, canvas.width, canvas.height);
-        utils.updateCollisionVals();
-        utils.calcChanges();  
-        drawPlayer()
-        requestAnimationFrame(drawplayerLayer)
-};
+state.map.image.src = state.map.currentMap.url;
 
 function draw() {
+    frameCount++
+    game[state.mode].calcChanges();
+    drawItemLayer();
     drawplayerLayer();
+    if (frameCount === 60) {
+        frameCount = 0;
+    }
+    state.animationFrame = requestAnimationFrame(draw);
 }
 
-function drawPlayer() {
+function drawplayerLayer() { 
+    //if (frameCount % 5 === 0){
+    playerCtx.clearRect(state.previousPX, state.previousPY, state.scaledPW + 5, state.scaledPH + 5);   
     playerCtx.beginPath();
     playerCtx.rect(state.pX, state.pY , scaledPW, scaledPH);
     playerCtx.fillStyle = "red";
     playerCtx.fill();
     playerCtx.closePath();
-}
-
-function getMapDetails(){
-   transition == true;
-}
-
+    //}
+};
 
 function drawItemLayer() {
-    itemCtx.clearRect(0, 0, canvas.width, canvas.height)
-    drawItems();
+    calcItemAnimations();
+    drawItems();  
+}
+
+function calcItemAnimations(){
+    Object.keys(state.currentAnimations.items).forEach(itemKey => {
+        const mapItem = state.currentAnimations.items[itemKey];
+        // todo: implement proper animation lookup logic, maybe in utils
+        let activeAnimation = mapItem.item.type == 'chest'? 'open' : 'placeholder';
+        if( mapItem.animate && mapItem.status + 1 < mapItem.item.animations[activeAnimation].length  
+        ){
+            mapItem.status++;
+        }
+        if(mapItem.animate && mapItem.status == mapItem.item.animations.open.length -1){
+            mapItem.animate = false
+        }
+    })
 }
 
 function drawItems() {
-    state.currentMap.mapComponents.forEach(element => {
-        itemCtx.beginPath();
-        const item = new Image()
-        item.onload = function() {
-            drawSingleItem(item, element);
-        }
-        item.src = element.item.src
+    Object.keys(state.currentAnimations.items).forEach(key => {
+        const currentItem = state.currentAnimations.items[key];
+        if (state.transition){
+            initializeItem(currentItem, key)
+        } else {
+            if(currentItem.animate){
+                console.log(currentItem.x, currentItem.y, currentItem.item.metaData.unitWidth, currentItem.item.metaData.unitHeight)
+            itemCtx.clearRect(currentItem.x + state.map.currentMap.display.minX, currentItem.y + state.map.currentMap.display.miny, currentItem.item.metaData.unitWidth, currentItem.item.metaData.unitHeight)
+            drawSingleItem(currentItem.image, currentItem)
+            }  
+        } 
     });
 }
 
-function drawSingleItem(item ,{item: itemDetails, status, x, y} = element, currentMap = state.currentMap){
-    const animations = itemDetails.animations;
-    const currentFrame = itemDetails.metaData.status[status];
-    const displayX = x + currentMap.display.minX;
-    const displayY = y + currentMap.display.minY;
-    state.bounds.push([displayX, displayX + (animations[currentFrame][2]), displayY, displayY + animations[currentFrame][3]]);
-    itemCtx.drawImage(item, animations[currentFrame][0], animations[currentFrame][1], animations[currentFrame][2], animations[currentFrame][3], displayX, displayY, animations[currentFrame][2], animations[currentFrame][3] );
-    itemCtx.closePath();
+function initializeItem (stateItem, key) {
+    stateItem.id = key;
+    const item = new Image()
+    item.onload = function() {
+        drawSingleItem(item, stateItem, true);
+    }
+    item.src = stateItem.item.src
+    stateItem.image = item;
+    stateItem.status = 0; 
 }
 
-
-draw();
+function drawSingleItem(image ,{item: itemDetails, start, x, y, animate, status, id} = element, init = false, currentMap = state.map.currentMap){
+    const animations = itemDetails.animations;
+    const currentFrame = !animate ? start: status;
+    const displayX = x + currentMap.display.minX;
+    const displayY = y + currentMap.display.minY;
+    console.log(displayX, displayY)
+    itemCtx.beginPath();
+    if(init) {
+        state.bounds.push([displayX, displayX + (animations.open[currentFrame][2]), displayY, displayY + animations.open[currentFrame][3], id])
+    };
+    itemCtx.drawImage(image, animations.open[currentFrame][0], animations.open[currentFrame][1], animations.open[currentFrame][2], animations.open[currentFrame][3], displayX, displayY, animations.open[currentFrame][2], animations.open[currentFrame][3] );
+    itemCtx.closePath();
+}

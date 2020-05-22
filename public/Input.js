@@ -2,7 +2,8 @@ window.game.state = {
     rightPressed: false,
     leftPressed: false,
     upPressed: false,
-    downPressed: false
+    downPressed: false,
+    interactPressed: false
 }
     
     document.addEventListener("keydown", keyDownHandler, false);
@@ -27,9 +28,10 @@ window.game.state = {
             case 'ArrowDown':
                 window.game.state.downPressed = true;
                 break;
-            // case 'e':
-            // case 'space':
-            //     window.game.state.
+            case 'e':
+            case ' ':
+                window.game.state.interactPressed = true;
+                break;
         }
     }
 
@@ -50,6 +52,10 @@ window.game.state = {
             case 'Down':
             case 'ArrowDown':
                 window.game.state.downPressed = false;
+                break;
+            case 'e':
+            case ' ':
+                window.game.state.interactPressed = false;
                 break;
         }
     }
