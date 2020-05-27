@@ -1,31 +1,33 @@
 let state = window.game.state;
 window.game.exploration = {};
-let pX, dPX, pY, dPY, currentMap, rightPressed, leftPressed, upPressed, downPressed, interactPressed, scaledPW, scaledPH, bounds, currentAnimations, callOnce = false;
+let pX, dPX, pY, dPY, currentMap, rightPressed, leftPressed, upPressed, downPressed, interactPressed, scaledPW, scaledPH, bounds, currentAnimations, transition, callOnce = false;
 
 window.game.exploration.calcChanges = () => {
     updateCollisionVals()
-    state.previousPX = state.pX;
-    state.previousPY = state.pY
-    if (canMoveRight(bounds)) {
-        state.pX += dPX;
-    }
+    if(!transition) {
+        state.previousPX = state.pX;
+        state.previousPY = state.pY
+        if (canMoveRight(bounds)) {
+            state.pX += dPX;
+        }
 
-    if (canMoveUp(bounds)) {
-        state.pY -= dPY
-    }
+        if (canMoveUp(bounds)) {
+            state.pY -= dPY
+        }
 
-    if (canMoveLeft(bounds)) {
-        state.pX -= dPX 
-    }
+        if (canMoveLeft(bounds)) {
+            state.pX -= dPX 
+        }
 
-    if (canMoveDown(bounds)) {
-        state.pY += dPY
-    }
+        if (canMoveDown(bounds)) {
+            state.pY += dPY
+        }
 
-    if (interactPressed){
-        interactWithItem();
-    }
-    checkForMapTransition();
+        if (interactPressed){
+            interactWithItem();
+        }
+        checkForMapTransition();
+ }
 };
 
 const updateCollisionVals = () => {
@@ -44,7 +46,8 @@ const updateCollisionVals = () => {
         scaledPH,
         bounds,
         interactPressed,
-        currentAnimations
+        currentAnimations,
+        transition
     } = state);
 }
 
@@ -115,16 +118,20 @@ function canMoveLeft(boundaries) {
  }
 
  function checkForMapTransition(){
-     if(state.transition === true){
-         return
-     }
-     let map = state.map.currentMap
-     map.transitionPoints.forEach(point => {
-         if(state.pX + (state.scaledPW/2) >= point.x + map.display.minX && state.pY >=  point.y + map.display.minY){
+     let transitionPoints = currentMap.transitionPoints;
+     transitionPoints.forEach(point => {
+         if(touchingTransitionPoint(point)){
             cancelAnimationFrame(state.animationFrame);
-             state.transition = true;
-             map = window.game.maps[point.transitionTo];
-            state.map.image.src = map.url;
+            state.transition = true;
+            state.currentTransition = point;
+            state.map.previousMap = state.map.currentMap;
+            state.map.currentMap = window.game.maps[point.transitionTo];
+            state.map.image.src = state.map.currentMap.url;
+            updateCollisionVals();
          }
      })
+ }
+
+ function touchingTransitionPoint(point){
+    return state.pX + (state.scaledPW/2) > point.x + currentMap.display.minX && state.pX + (state.scaledPW/2) < point.x + currentMap.display.minX + 100 && state.pY + (state.scaledPH/2) < point.y + currentMap.display.minY && state.pY + (state.scaledPH/2) > point.y + currentMap.display.minY - 100;
  }

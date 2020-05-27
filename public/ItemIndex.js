@@ -13,5 +13,11 @@ window.game.items.itemIndex = {
         src: 'http://localhost:3000/Items/chests.png',
         metaData: metaChest,
         animations:{ open: utilities.returnAnimationArray(metaChest, 5)}
+    },
+    chestYellow: {
+        type: 'chest',
+        src: 'http://localhost:3000/Items/chests.png',
+        metaData: metaChest,
+        animations: { open: utilities.returnAnimationArray(metaChest, 2)}
     }
 }

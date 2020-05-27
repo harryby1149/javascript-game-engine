@@ -1,5 +1,6 @@
  const chestRed = window.game.items.itemIndex.chestRed
  const chestWood = window.game.items.itemIndex.chestWood
+ const chestYellow = window.game.items.itemIndex.chestYellow
  
  EstateSample = {
     id: 'EstateSample', 
@@ -8,7 +9,9 @@
         {
             transitionTo: "skullSpaceSuit",
             x: 0,
-            y: 600
+            y: 600,
+            startAtX: 0,
+            startAtY: 600
         }
     ],
     mapDimensions: {width: 1200, height: 900},
