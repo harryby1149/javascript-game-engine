@@ -19,25 +19,29 @@
         {
            'chest1': {
                 item: chestRed,
-                start: 0,
+                start: 'open',
+                status: 0,
                 x: 80,
                 y: 80
             },
            'chest2': {
                 item: chestWood,
-                start: 0,
+                start: 'open',
+                status: 0,
                 x: 180,
                 y: 180
            },
             'chest3': {
                 item: chestWood,
-                start: 0,
+                start: 'open',
+                status: 0,
                 x: 380,
                 y: 180
             },
             'chest4' : {
                 item: chestWood,
-                start: 0,
+                start: 'open',
+                status: 0,
                 x: 580,
                 y: 180
             }

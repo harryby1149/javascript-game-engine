@@ -1,26 +1,52 @@
-let state = window.game.state;
 window.game.exploration = {};
-let pX, dPX, pY, dPY, currentMap, rightPressed, leftPressed, upPressed, downPressed, interactPressed, scaledPW, scaledPH, bounds, currentAnimations, transition, callOnce = false;
+let state, pX, dPX, pY, dPY, currentMap, rightPressed, leftPressed, upPressed, downPressed, interactPressed, scaledPW, scaledPH, bounds, currentAnimations, transition, callOnce = false;
 
 window.game.exploration.calcChanges = () => {
     updateCollisionVals()
     if(!transition) {
+        window.game.animatePlayer = false;
         state.previousPX = state.pX;
-        state.previousPY = state.pY
-        if (canMoveRight(bounds)) {
-            state.pX += dPX;
+        state.previousPY = state.pY;
+        const currentBounds = []; 
+        Object.keys(bounds).forEach(key => {currentBounds.push(bounds[key])});
+        if (canMoveRight(currentBounds)) {
+            if(canScrollMap('right')){
+                window.game.scrollMap = true;
+                state.map.currentMap.display.mapX += dPX;
+            }else {
+                window.game.animatePlayer = true;
+                state.pX += dPX
+            } 
         }
 
-        if (canMoveUp(bounds)) {
-            state.pY -= dPY
+        if (canMoveUp(currentBounds)) {
+            if(canScrollMap('up')){
+                window.game.scrollMap = true;
+                state.map.currentMap.display.mapY -= dPY;
+            }else {
+                window.game.animatePlayer = true;
+                state.pY -= dPY
+            } 
         }
 
-        if (canMoveLeft(bounds)) {
-            state.pX -= dPX 
+        if (canMoveLeft(currentBounds)) {
+            if(canScrollMap('left')){
+                window.game.scrollMap = true;
+                state.map.currentMap.display.mapX -= dPX;
+            }else {
+                window.game.animatePlayer = true;
+                state.pX -= dPX
+            }  
         }
 
-        if (canMoveDown(bounds)) {
-            state.pY += dPY
+        if (canMoveDown(currentBounds)) {
+            if(canScrollMap('down')){
+                window.game.scrollMap = true;
+                state.map.currentMap.display.mapY += dPY;
+            }else {
+                window.game.animatePlayer = true;
+                state.pY += dPY
+            } 
         }
 
         if (interactPressed){
@@ -77,8 +103,8 @@ function canMoveRight(boundaries ) {
 }
 
 function canMoveLeft(boundaries) {
-    const leftDiff = pX - dPX 
-    let isLeft =  leftPressed && leftDiff > currentMap.display.minX ? true : false;
+    const leftDiff = pX - dPX
+    let isLeft =  leftPressed && (leftDiff > currentMap.display.minX || leftDiff >  currentMap.display.minX - currentMap.display.mapX)? true : false;
     if (isLeft) {
         boundaries.forEach((boundArray, index )=> {
            if ( (leftDiff > boundArray[0] && leftDiff < boundArray[1]) && (pY > boundArray[2] - scaledPH  && pY < boundArray[3]) ) {
@@ -115,6 +141,20 @@ function canMoveLeft(boundaries) {
         } )
     }
     return isDown
+ }
+
+ function canScrollMap(direction) {
+     switch (direction) {
+        case 'up':
+           return pY - dPY < currentMap.display.mapY ? true: false;
+        case 'down':
+            return pY + dPY > currentMap.display.mapY && currentMap.mapDimensions.height -  state.viewPort.height  ? true: false;
+        case 'left':
+            return pX - dPX < currentMap.display.mapX + currentMap.display.minX  ? true: false; 
+        case 'right':
+            return pX + dPX > currentMap.display.mapX && currentMap.mapDimensions.width > (state.viewPort.width + currentMap.display.mapX) ? true: false
+     }
+
  }
 
  function checkForMapTransition(){

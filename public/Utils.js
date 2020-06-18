@@ -20,10 +20,10 @@ window.game.utils = {
         return animationArray;
     },
     arrayToFlatMap: (array) => {
-        const itemMap = {}
+        const map = {}
         array.forEach( element => {
-            itemMap[element.id] = element;
+            map[element.id] = element;
         })
-        return itemMap;
+        return map;
     } 
 };

@@ -3,7 +3,12 @@ window.game.state.gameLoop = () => {
     state.frameCount++
     game[state.mode].calcChanges();
     game.draw.drawItemLayer();
-    game.draw.drawplayerLayer();
+    if(window.game.scrollMap){
+        game.draw.drawMapLayer();
+    }
+    if(window.game.animatePlayer){
+        game.draw.drawPlayerLayer();
+    }
     if (state.frameCount === 60) {
         state.frameCount = 0;
     }

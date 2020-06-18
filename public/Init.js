@@ -1,15 +1,20 @@
 window.game.init = () => {
+    /**
+     * Currently this just loads the default map and intializes the majority of the state variables we use for the exploration gameplay elements.  
+     * In the future this will be called from the start menu where, depending on the option selected, we will initialize with the new game sequence
+     * or load the save game info.
+    */
     const game = window.game;
     const maps = game.maps;
     const state = game.state;
     game.draw.initCanvases();
     const canvas = game.draw.bgCanvas;
-    state.frameCount = 0;
+    state.frameCount = 0; // used by the draw functions to pace animations
     state.transition = true;
     state.pX = canvas.width/2;
     state.pY = canvas.height * (3/5);
     state.previousPX = state.pX;
-    state.previousPY = state.pX;
+    state.previousPY = state.pY;
     state.dPX = 5;
     state.dPY = 5;
     state.scaledPW  = 50;
@@ -22,37 +27,9 @@ window.game.init = () => {
         currentMap: maps.estateSample,
         image: new Image()
     };
-    state.currentAnimations = {items: {}};
+    
     state.mode = 'exploration';
-    state.map.image.onload = function() { 
-    const map = state.map.currentMap;
-    const mapDimensions = map.mapDimensions;
-    let width = state.viewPort.width;
-    let height = state.viewPort.height;
-    if(state.map.previousMap){
-        game.draw.bgCtx.clearRect(state.map.previousMap.display.minX, state.map.previousMap.display.minY, width, height)
-    }
-    delete state.map.previousMap;
-    map.display = {
-        minX : (canvas.width - (mapDimensions.width <= 1200 ? mapDimensions.width : 1200) ) / 2,
-        minY : (canvas.height - (mapDimensions.height <= 900 ? mapDimensions.height : 900)) / 2,
-        maxX : canvas.width - ((canvas.width - (mapDimensions.width <= 1200 ? mapDimensions.width : 1200)) / 2),
-        maxY : canvas.height - ((canvas.height - (mapDimensions.height <= 900 ? mapDimensions.height : 900)) / 2),
-        mapStartX: state.currentTransition? state.currentTransition.startAtX : 0 ,
-        mapStartY: state.currentTransition? state.currentTransition.startAtY : 0,
-    }
-    game.draw.bgCtx.beginPath();
-    game.draw.bgCtx.drawImage(state.map.image, map.display.mapStartX, map.display.mapStartY, width, height,  map.display.minX , map.display.minY, width, height);
-    game.draw.bgCtx.closePath();
-    state.bounds = []
-    if(map.mapBounds) { map.mapBounds.forEach(boundary => state.bounds.push(boundary)) };
-    state.currentAnimations.items = Object.assign({}, state.currentAnimations.items, map.mapComponents)
-    console.log(state.currentAnimations.items)
-    game.draw.drawItems();
-    state.transition = false;
-    state.currentTransition = null;
-    window.game.state.gameLoop();
-}
+    state.map.image.onload = game.mapLoad
     state.map.image.src = state.map.currentMap.url
 };
 
