@@ -2,14 +2,12 @@ game.draw = {
     scale: 1,
     drawPlayerLayer: () => {
         const state = window.game.state; 
-        //if (frameCount % 5 === 0){
-       game.draw.pCtx.clearRect(state.previousPX, state.previousPY, state.scaledPW + 5, state.scaledPH + 5);   
-       game.draw.pCtx.beginPath();
-       game.draw.pCtx.rect(state.pX, state.pY , state.scaledPW, state.scaledPH);
-       game.draw.pCtx.fillStyle = "red";
-       game.draw.pCtx.fill();
-       game.draw.pCtx.closePath();
-        //}
+        game.draw.pCtx.clearRect(state.previousPX -5, state.previousPY -5, state.scaledPW + 10, state.scaledPH + 10);   
+        game.draw.pCtx.beginPath();
+        game.draw.pCtx.rect(state.pX, state.pY , state.scaledPW, state.scaledPH);
+        game.draw.pCtx.fillStyle = "red";
+        game.draw.pCtx.fill();
+        game.draw.pCtx.closePath();
     },
     drawItemLayer: () => {
         game.draw.calcItemAnimations();
@@ -108,20 +106,6 @@ game.draw = {
                 }
             }
             return dispProps;
-    },
-    initCanvases: () => {
-        game.draw.bgCanvas = document.getElementById('background-canvas');
-        game.draw.bgCanvas.width = game.draw.bgCanvas.clientWidth;
-        game.draw.bgCanvas.height = 900;
-        game.draw.bgCtx = game.draw.bgCanvas.getContext('2d');
-        game.draw.pCanvas = document.getElementById('player-canvas');
-        game.draw.pCanvas.width =  game.draw.bgCanvas.width;
-        game.draw.pCanvas.height = game.draw.bgCanvas.height;
-        game.draw.pCtx = game.draw.pCanvas.getContext('2d');
-        game.draw.iCanvas = document.getElementById('item-canvas');
-        game.draw.iCanvas.width =  game.draw.bgCanvas.width;
-        game.draw.iCanvas.height = game.draw.bgCanvas.height;
-        game.draw.iCtx = game.draw.iCanvas.getContext('2d');
     }
 }
 

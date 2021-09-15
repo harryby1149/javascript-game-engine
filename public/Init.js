@@ -7,7 +7,7 @@ window.game.init = () => {
     const game = window.game;
     const maps = game.maps;
     const state = game.state;
-    game.draw.initCanvases();
+    initCanvases();
     const canvas = game.draw.bgCanvas;
     state.frameCount = 0; // used by the draw functions to pace animations
     state.transition = true;
@@ -20,17 +20,33 @@ window.game.init = () => {
     state.scaledPW  = 50;
     state.scaledPH = 50;
     state.viewPort = {
-        width: 1200,
-        height: 900
-    };
+        height: window.innerHeight,
+        width: window.innerWidth
+    }
     state.map = {
         currentMap: maps.estateSample,
         image: new Image()
     };
     
     state.mode = 'exploration';
+    window.game[state.mode].inputs.setInput();
     state.map.image.onload = game.mapLoad
     state.map.image.src = state.map.currentMap.url
 };
+
+function initCanvases() {
+    game.draw.bgCanvas = document.getElementById('background-canvas');
+    game.draw.bgCanvas.width = game.draw.bgCanvas.clientWidth;
+    game.draw.bgCanvas.height = window.innerHeight;
+    game.draw.bgCtx = game.draw.bgCanvas.getContext('2d');
+    game.draw.pCanvas = document.getElementById('player-canvas');
+    game.draw.pCanvas.width =  game.draw.bgCanvas.width;
+    game.draw.pCanvas.height = game.draw.bgCanvas.height;
+    game.draw.pCtx = game.draw.pCanvas.getContext('2d');
+    game.draw.iCanvas = document.getElementById('item-canvas');
+    game.draw.iCanvas.width =  game.draw.bgCanvas.width;
+    game.draw.iCanvas.height = game.draw.bgCanvas.height;
+    game.draw.iCtx = game.draw.iCanvas.getContext('2d');
+}
 
 window.game.init();

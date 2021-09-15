@@ -10,9 +10,10 @@
     <script> window.game = {state:{}, utils: {}, maps:{}}; </script>
     <script src = "/Utils.js"></script>
     <script src = "/ExplorationControls.js"></script>
+    <script src= "/ExplorationInput.js"></script>
     <script src = "/ItemMetaData.js"></script>
     <script src= "/ItemIndex.js"></script>
-    <script src= "/Input.js"></script>
+    <script src= "/CombatControls.js"></script>
     <script src= "/MapObjects/EstateSample.js" ></script>
     <script src= "/MapObjects/SkullSpaceSuit.js" ></script>
     <script src= "/Draw.js"></script>
@@ -20,9 +21,9 @@
     <script src="/Transition.js"></script>
     
 <div id="viewport">
-    <canvas id="background-canvas"></canvas>
-    <canvas id="item-canvas"></canvas>
-    <canvas id="player-canvas"></canvas>
+    <canvas class="canvas" id="background-canvas"></canvas>
+    <canvas class="canvas" id="item-canvas"></canvas>
+    <canvas class="canvas" id="player-canvas"></canvas>
 </div>
 
 <script src= "/Init.js"></script>

@@ -1,8 +1,8 @@
 window.game.state.gameLoop = () => {
     const state = window.game.state;
     state.frameCount++
-    game[state.mode].calcChanges();
-    game.draw.drawItemLayer();
+    window.game[state.mode].calcChanges();
+    window.game.draw.drawItemLayer();
     if(window.game.scrollMap){
         game.draw.drawMapLayer();
     }

@@ -1,4 +1,5 @@
 window.game.exploration = {};
+window.game.exploration.inputs = {};
 let state, pX, dPX, pY, dPY, currentMap, rightPressed, leftPressed, upPressed, downPressed, interactPressed, scaledPW, scaledPH, bounds, currentAnimations, transition, callOnce = false;
 
 window.game.exploration.calcChanges = () => {
@@ -146,13 +147,16 @@ function canMoveLeft(boundaries) {
  function canScrollMap(direction) {
      switch (direction) {
         case 'up':
-           return pY - dPY < currentMap.display.mapY ? true: false;
+           return pY - dPY < currentMap.display.mapY;
         case 'down':
-            return pY + dPY > currentMap.display.mapY && currentMap.mapDimensions.height -  state.viewPort.height  ? true: false;
+            return pY + dPY > currentMap.display.mapY && currentMap.mapDimensions.height > (currentMap.display.mapY + state.viewPort.height);
         case 'left':
-            return pX - dPX < currentMap.display.mapX + currentMap.display.minX  ? true: false; 
+            return pX - dPX < currentMap.display.mapX + currentMap.display.minX; 
         case 'right':
-            return pX + dPX > currentMap.display.mapX && currentMap.mapDimensions.width > (state.viewPort.width + currentMap.display.mapX) ? true: false
+            console.log(state.viewPort.width);
+            console.log(currentMap.display.mapX + state.viewPort.width);
+            console.log(currentMap.mapDimensions.width);
+            return pX + dPX > currentMap.display.mapX && currentMap.display.mapX + state.viewPort.width < currentMap.mapDimensions.width;
      }
 
  }
@@ -170,6 +174,10 @@ function canMoveLeft(boundaries) {
             updateCollisionVals();
          }
      })
+ }
+
+ function checkForCombatTransition() {
+     
  }
 
  function touchingTransitionPoint(point){

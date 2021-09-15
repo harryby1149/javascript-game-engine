@@ -1,17 +1,16 @@
 window {
     background: #ffffff;
+    overflow: hidden;
 }
 
 #viewport {
     position: relative;
-    height: 100%;
-    width: 100%;
 }
 
 #background-canvas { 
     background: #000000; 
     display: block; 
-    margin: 0 auto;
+    margin: 0, auto;
     width: 100%;
     position: absolute;
     z-index: 1;
