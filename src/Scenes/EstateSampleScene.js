@@ -1,9 +1,13 @@
- const chestRed = window.game.items.itemIndex.chestRed
- const chestWood = window.game.items.itemIndex.chestWood
- const chestYellow = window.game.items.itemIndex.chestYellow
+ import {
+     chestRed,
+     chestWood,
+     chestYellow
+ } from "../Items/ItemIndex"
+
+ import {exploration} from "../Gameplay/Exploration/ExplorationControls"
  
- EstateSample = {
-    id: 'EstateSample', 
+ export const estateSample = {
+    id: 'estateSample', 
     url:"http://localhost:3000/Maps/Estate-Map-Example.jpg",
     transitionPoints: [
         {
@@ -48,6 +52,6 @@
         },
     mapBounds: [
         [260, 300, 300, 360]
-    ]
+    ],
+    mode: exploration,
 }
-window.game.maps.estateSample = EstateSample  

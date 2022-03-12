@@ -1,5 +1,13 @@
-SkullSpaceSuit = {
-   id: 'SkullSpaceSuit', 
+import {
+    chestRed,
+    chestWood,
+    chestYellow
+} from "../Items/ItemIndex"
+
+import {exploration} from "../Gameplay/Exploration/ExplorationControls"
+
+export const skullSpaceSuit = {
+   id: 'skullSpaceSuit', 
    url:"http://localhost:3000/Maps/skullSpaceSuit.jpg",
    transitionPoints: 
     [ 
@@ -49,6 +57,6 @@ SkullSpaceSuit = {
                x: 1600,
                y: 1600
            }
-       }
+       },
+       mode: exploration
 }
-window.game.maps.skullSpaceSuit = SkullSpaceSuit  

@@ -5,8 +5,13 @@ const Path = require("path");
 app.use(express.static('public'));
 
 app.get('/', function (req, res) {
-  const filePath = Path.join(__dirname, "canvas.html") 
+  const filePath = Path.join(__dirname, 'dist', "canvas.html") 
   console.log(filePath)
+  res.sendFile(filePath);
+})
+
+app.get('/main.js', function (req, res) {
+  const filePath = Path.join(__dirname, 'dist', 'main.js')
   res.sendFile(filePath);
 })
 

@@ -1,4 +1,4 @@
-window.game.utils = {
+export const utils = {
     returnAnimationArray: (itemMetaData, setNumber) => {
         const animationArray = [];
         const unitWidth = itemMetaData.unitWidth;
@@ -29,31 +29,5 @@ window.game.utils = {
 
     getViewPortDimensions: () => {
         return document.getElementById('viewport').getBoundingClientRect();
-    },
-
-    transitionToExplorationMode: (entryPoint) => {
-        let state = window.game.state;
-        if(state.mode !== "exploration") {
-            state.mode = "exploration";
-            window.game.exploration.inputs.setInput();
-        }
-        cancelAnimationFrame(state.animationFrame);
-            state.transition = true;
-            state.currentTransition = entryPoint;
-            state.map.previousMap = state.map.currentMap;
-            state.map.currentMap = window.game.maps[point.transitionTo];
-            state.map.image.src = state.map.currentMap.url;
-            updateCollisionVals();
-    },
-
-    transitionToCombatMode: () => {
-        let state = window.game.state;
-        if(state.mode !== "combat") {
-            state.mode = "combat";
-            window.game.combat.inputs.setInput();
-        }
-        cancelAnimationFrame(state.animationFrame);
-        state.transition = true;
-        state.currentTransition = 0;
     }
 };

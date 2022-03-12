@@ -1,0 +1,25 @@
+{
+  "name": "javascript-game-engine",
+  "version": "1.0.0",
+  "description": "A learning project for building and running 2d games with js",
+  "main": "App.js",
+  "scripts": {
+    "test": "echo \"Error no test specified\" && exit 1",
+    "build": "webpack",
+    "start": "npm run build && node App.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/harryby1149/javascript-game-engine.git"
+  },
+  "author": "Harry Young",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/harryby1149/javascript-game-engine/issues"
+  },
+  "homepage": "https://github.com/harryby1149/javascript-game-engine#readme",
+  "devDependencies": {
+    "nodemon": "^2.0.15",
+    "webpack": "^5.70.0"
+  }
+}
