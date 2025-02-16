@@ -1,6 +1,6 @@
  import { scenes } from '../Scenes/index'
 
- // initialize state object with defaul values
+ // initialize state object with default values
  // todo remove overlap with init.js
  export let state = {
     frameCount:  0, // used by the draw functions to pace animations
