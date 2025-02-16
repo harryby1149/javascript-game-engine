@@ -13,6 +13,10 @@ function generateGridMetadata (globalPosition, dimensions, rotation = 0, shape =
         dimensions: [],
         nodes: {}
     }
+
+    const gridArea = (dimensions[0] * dimensions[1]) / 2
 }
 
-func
+function getAreaForShape(dimensions, shape){
+    
+}
