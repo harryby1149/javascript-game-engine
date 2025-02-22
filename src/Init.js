@@ -28,14 +28,21 @@ export const init = () => {
         width: window.innerWidth
     }
     state.map = {
-        currentMap: scenes.estateSample,
+        currentMap: scenes.citybuilderSample,
         image: new Image()
     };
     
-    state.mode = exploration;
+    state.mode = scenes.citybuilderSample.mode;
     console.log("setting onload function");
-    state.map.image.onload = transitionScene;
-    state.map.image.src = state.map.currentMap.url;
+    // if background is pre-rendered image
+    if(state.map.image.src) {
+        // init scene when image is loaded
+        state.map.image.onload = transitionScene;
+        state.map.image.src = state.map.currentMap.url;
+    } else {
+        // init scene immediately
+        transitionScene();
+    }
 };
 
 function initCanvases() {

@@ -2,13 +2,10 @@ import { draw } from "./Draw";
 import { state } from "./State";
 import { gameLoop } from "./Game";
 
+// TODO: branching draw logic depending on scene mode 
 export const transitionScene = function() { 
-    const canvas = state.bgCanvas;
-    state.currentAnimations = {items: {}}; 
-    const map = state.map.currentMap;
-    const mapDimensions = map.mapDimensions;
-    let width = state.viewPort.width;
-    let height = state.viewPort.height;
+    const {canvas, map, mapDimensions} = getDisplayConstants();
+    // do not transition to current map
     if(state.map.previousMap == map) {
         return;
     }
@@ -45,4 +42,12 @@ export const transitionScene = function() {
     state.transition = false;
     state.currentTransition = null;
     gameLoop();
+}
+
+const getDisplayConstants = () => {
+    const canvas = state.bgCanvas;
+    state.currentAnimations = {items: {}}; 
+    const map = state.map.currentMap;
+    const mapDimensions = map.mapDimensions;
+   return {canvas, map, mapDimensions}
 }
