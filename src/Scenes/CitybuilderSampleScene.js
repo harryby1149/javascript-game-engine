@@ -1,4 +1,6 @@
-import { generateGridMetadata } from "../Gameplay/Grid/GridBase"
+import { generateGridMetadata, isInGrid, nodeFromCoords } from "../Gameplay/Grid/GridBase.js"
+
+"use strict"
 export const CitybuilderSample = {
     id: 'citybuilderSample', 
     url: false,
@@ -8,8 +10,23 @@ export const CitybuilderSample = {
     ],
     grid: generateGridMetadata(
         [0, 0], 
-        [600, 450],
-        16
+        [100, 200],
+        [6, 12]
     ),
-    mode: "grid" //placeholder
+    mapType: 1,
+    mode: {
+        id: "grid", 
+        inputs:{ 
+            setInput: () =>{
+                console.log("setting grid inputs"),
+                document.addEventListener("click", (e) => {
+                    if(isInGrid(CitybuilderSample.grid, e.clientX, e.clientY)) {
+                        nodeFromCoords(CitybuilderSample.grid,e.clientX, e.clientY).onClick()
+                    }
+                }, false);
+            },
+            clearInput: () => {console.log("clearing inputs")}
+        },
+        calcChanges: () => {}
+    } //placeholder
 }

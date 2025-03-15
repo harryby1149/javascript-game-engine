@@ -1,22 +1,25 @@
-import { draw } from "./Draw";
+import { draw } from "./Draw/Draw";
 import { state } from "./State";
 import { gameLoop } from "./Game";
 
 // TODO: branching draw logic depending on scene mode 
 export const transitionScene = function() { 
-    const {canvas, map, mapDimensions} = getDisplayConstants();
+    const {canvas, scene, mapDimensions} = getDisplayConstants();
     // do not transition to current map
-    if(state.map.previousMap == map) {
+    if(state.scene.previousScene == scene) {
         return;
     }
-    if(state.map.previousMap){
-        state.bgCtx.clearRect(state.map.previousMap.display.minX, state.map.previousMap.display.minY, width, height);
+    if(state.scene.previousScene){
+        state.bgCtx.clearRect(state.scene.previousScene.display.minX, state.scene.previousScene.display.minY, width, height);
         state.currentAnimations.items = {};
+        delete state.scene.previousScene;
     }
-    delete state.map.previousMap;
+    console.log(state.scene)
+    state.scene.mode.inputs.clearInput();
+    state.scene.mode.inputs.setInput();
     // display object contains metadata around drawing the map object
     // needs to be set on the state map object and not the reference
-    state.map.currentMap.display = {
+    state.scene.display = {
         minX : (canvas.width - (mapDimensions.width <= canvas.width ? mapDimensions.width : canvas.width) ) / 2, // the x co-ordinate to start drawing the map
         minY : (canvas.height - (mapDimensions.height <= canvas.height ? mapDimensions.height : canvas.height)) / 2, // the y co-oridnate to start drawing the map
         maxX : canvas.width - ((canvas.width - (mapDimensions.width <= canvas.width ? mapDimensions.width : canvas.width)) / 2), // the width of the viewport 
@@ -30,15 +33,14 @@ export const transitionScene = function() {
     state.iCtx.clearRect(0, 0, canvas.width, canvas.height);
     console.log("cleared item layer")
     state.bounds = {}
-    if(map.mapBounds) { map.mapBounds.forEach((element, index, array) => {
+    if(scene.mapBounds) { scene.mapBounds.forEach((element, index, array) => {
         state.bounds[index] = element;
     }) };
-    state.currentAnimations.items = Object.assign({}, map.mapComponents)
-    draw.drawItems(true);
-    draw.drawPlayerLayer();
-    state.mode.inputs.clearInput();
-    state.mode = state.map.currentMap.mode;
-    state.mode.inputs.setInput();
+    state.currentAnimations.items = Object.assign({}, scene.mapComponents)
+    if(state.scene.mode.id != "grid"){
+        draw.drawItems(true);
+        draw.drawPlayerLayer();
+    }
     state.transition = false;
     state.currentTransition = null;
     gameLoop();
@@ -47,7 +49,7 @@ export const transitionScene = function() {
 const getDisplayConstants = () => {
     const canvas = state.bgCanvas;
     state.currentAnimations = {items: {}}; 
-    const map = state.map.currentMap;
-    const mapDimensions = map.mapDimensions;
-   return {canvas, map, mapDimensions}
+    const scene = state.scene;
+    const mapDimensions = scene.mapDimensions;
+   return {canvas, scene, mapDimensions}
 }

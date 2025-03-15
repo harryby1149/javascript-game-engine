@@ -3,9 +3,10 @@ import {state} from '../../Core/State';
 import { scenes } from '../../Scenes';
 
 export const exploration = {
+    id: "exploration",
     inputs: inputs
 };
-let pX, dPX, pY, dPY, currentMap, rightPressed, leftPressed, upPressed, downPressed, interactPressed, scaledPW, scaledPH, bounds, currentAnimations, transition, callOnce = false;
+let pX, dPX, pY, dPY, scene, rightPressed, leftPressed, upPressed, downPressed, interactPressed, scaledPW, scaledPH, bounds, currentAnimations, transition, callOnce = false;
 
 exploration.calcChanges = () => {
     updateCollisionVals()
@@ -18,7 +19,7 @@ exploration.calcChanges = () => {
         if (canMoveRight(currentBounds)) {
             if(canScrollMap('right')){
                 state.scrollMap = true;
-                state.map.currentMap.display.mapX += dPX;
+                state.scene.display.mapX += dPX;
             }else {
                 state.animatePlayer = true;
                 state.pX += dPX
@@ -28,7 +29,7 @@ exploration.calcChanges = () => {
         if (canMoveUp(currentBounds)) {
             if(canScrollMap('up')){
                 state.scrollMap = true;
-                state.map.currentMap.display.mapY -= dPY;
+                state.scene.display.mapY -= dPY;
             }else {
                 state.animatePlayer = true;
                 state.pY -= dPY
@@ -38,7 +39,7 @@ exploration.calcChanges = () => {
         if (canMoveLeft(currentBounds)) {
             if(canScrollMap('left')){
                 state.scrollMap = true;
-                state.map.currentMap.display.mapX -= dPX;
+                state.scene.display.mapX -= dPX;
             }else {
                 state.animatePlayer = true;
                 state.pX -= dPX
@@ -48,7 +49,7 @@ exploration.calcChanges = () => {
         if (canMoveDown(currentBounds)) {
             if(canScrollMap('down')){
                 state.scrollMap = true;
-                state.map.currentMap.display.mapY += dPY;
+                state.scene.display.mapY += dPY;
             }else {
                 state.animatePlayer = true;
                 state.pY += dPY
@@ -63,7 +64,7 @@ exploration.calcChanges = () => {
 };
 
 const updateCollisionVals = () => {
-    currentMap = state.map.currentMap;
+    scene = state.scene;
     ({
         pX,
         dPX,
@@ -88,14 +89,14 @@ const interactWithItem = () => {
     }
     callOnce = true;
     if( state.isAdjacent ){
-          currentAnimations.items[state.map.currentMap.mapComponents[state.isAdjacent].id].animate = true  ;
+          currentAnimations.items[state.scene.mapComponents[state.isAdjacent].id].animate = true  ;
           callOnce = false;
     }
 };
 
 function canMoveRight(boundaries ) {
    const rightDiff = pX + dPX  
-   let isRight =  rightPressed && rightDiff < currentMap.display.maxX - scaledPW ? true : false;
+   let isRight =  rightPressed && rightDiff < scene.display.maxX - scaledPW ? true : false;
    if (isRight) {
        boundaries.forEach((boundArray, index )=> {
           if ( (rightDiff > boundArray[0] - scaledPW && rightDiff < boundArray[1]) && (pY > boundArray[2] - scaledPH  && pY < boundArray[3]) ) {
@@ -109,7 +110,7 @@ function canMoveRight(boundaries ) {
 
 function canMoveLeft(boundaries) {
     const leftDiff = pX - dPX
-    let isLeft =  leftPressed && (leftDiff > currentMap.display.minX || leftDiff >  currentMap.display.minX - currentMap.display.mapX)? true : false;
+    let isLeft =  leftPressed && (leftDiff > scene.display.minX || leftDiff >  scene.display.minX - scene.display.mapX)? true : false;
     if (isLeft) {
         boundaries.forEach((boundArray, index )=> {
            if ( (leftDiff > boundArray[0] && leftDiff < boundArray[1]) && (pY > boundArray[2] - scaledPH  && pY < boundArray[3]) ) {
@@ -123,7 +124,7 @@ function canMoveLeft(boundaries) {
  
  function canMoveUp(boundaries) {
     const upDiff = pY - dPY; 
-    let isUp = upPressed && upDiff > currentMap.display.minY ? true : false;
+    let isUp = upPressed && upDiff > scene.display.minY ? true : false;
     if (isUp) {
         boundaries.forEach((boundArray, index )=> {
            if ( (pX > boundArray[0] - scaledPW && pX < boundArray[1]) && (upDiff > boundArray[2] - scaledPH  && upDiff < boundArray[3]) ) {
@@ -137,7 +138,7 @@ function canMoveLeft(boundaries) {
 
  function canMoveDown(boundaries) {
     const downDiff = pY + dPY; 
-    let isDown = downPressed && downDiff < currentMap.display.maxY - scaledPH ? true : false;
+    let isDown = downPressed && downDiff < scene.display.maxY - scaledPH ? true : false;
     if (isDown) {
         boundaries.forEach((boundArray, index ) => {
            if ( (pX > boundArray[0] - scaledPW && pX < boundArray[1]) && (downDiff > boundArray[2] - scaledPH  && downDiff < boundArray[3]) ) {
@@ -148,34 +149,37 @@ function canMoveLeft(boundaries) {
     return isDown
  }
 
- function canScrollMap(direction) {
+ export function canScrollMap(direction) {
      switch (direction) {
         case 'up':
-           return pY - dPY < currentMap.display.mapY;
+           return pY - dPY < scene.display.mapY;
         case 'down':
-            return pY + dPY > currentMap.display.mapY && currentMap.mapDimensions.height > (currentMap.display.mapY + state.viewPort.height);
+            return pY + dPY > scene.display.mapY && scene.mapDimensions.height > (scene.display.mapY + state.viewPort.height);
         case 'left':
-            return pX - dPX < currentMap.display.mapX + currentMap.display.minX; 
+            return pX - dPX < scene.display.mapX + scene.display.minX; 
         case 'right':
             console.log(state.viewPort.width);
-            console.log(currentMap.display.mapX + state.viewPort.width);
-            console.log(currentMap.mapDimensions.width);
-            return pX + dPX > currentMap.display.mapX && currentMap.display.mapX + state.viewPort.width < currentMap.mapDimensions.width;
+            console.log(scene.display.mapX + state.viewPort.width);
+            console.log(scene.mapDimensions.width);
+            return pX + dPX > scene.display.mapX && scene.display.mapX + state.viewPort.width < scene.mapDimensions.width;
      }
 
  }
 
  function checkForMapTransition(){
-     let transitionPoints = currentMap.transitionPoints;
+    if(!scene.transitionPoints){
+        return;
+    }
+     let transitionPoints = scene.transitionPoints;
      transitionPoints.forEach(point => {
          if(touchingTransitionPoint(point)){
             cancelAnimationFrame(state.animationFrame);
             state.transition = true;
             state.currentTransition = point;
-            state.map.previousMap = state.map.currentMap;
-            state.map.currentMap = scenes[point.transitionTo];
-            console.log(state.map.currentMap)
-            state.map.image.src = state.map.currentMap.url;
+            state.scene.previousScene = state.scene.scene;
+            state.scene.scene = scenes[point.transitionTo];
+            console.log(state.scene.scene)
+            state.scene.image.src = state.scene.scene.url;
             updateCollisionVals();
          }
      })
@@ -186,6 +190,6 @@ function canMoveLeft(boundaries) {
  }
 
  function touchingTransitionPoint(point){
-    return pX + (state.scaledPW/2) > point.x + currentMap.display.minX && pX + (state.scaledPW/2) < point.x + currentMap.display.minX + 100 && pY + (state.scaledPH/2) < point.y + currentMap.display.minY && pY + (state.scaledPH/2) > point.y + currentMap.display.minY - 100;
+    return pX + (state.scaledPW/2) > point.x + scene.display.minX && pX + (state.scaledPW/2) < point.x + scene.display.minX + 100 && pY + (state.scaledPH/2) < point.y + scene.display.minY && pY + (state.scaledPH/2) > point.y + scene.display.minY - 100;
  }
 

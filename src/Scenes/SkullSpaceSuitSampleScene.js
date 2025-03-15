@@ -58,5 +58,10 @@ export const skullSpaceSuit = {
                y: 1600
            }
        },
-       mode: exploration
+    mapType: 0,
+    image: ()=>{
+    const imageElement = new Image()
+    imageElement.src = this.url 
+    }, 
+    mode: exploration
 }

@@ -27,18 +27,14 @@ export const init = () => {
         height: window.innerHeight,
         width: window.innerWidth
     }
-    state.map = {
-        currentMap: scenes.citybuilderSample,
-        image: new Image()
-    };
-    
-    state.mode = scenes.citybuilderSample.mode;
+    console.log("setting scene")
+    state.scene = scenes.citybuilderSample;
+    console.log(state.scene)
     console.log("setting onload function");
     // if background is pre-rendered image
-    if(state.map.image.src) {
+    if(state.scene.image) {
         // init scene when image is loaded
-        state.map.image.onload = transitionScene;
-        state.map.image.src = state.map.currentMap.url;
+        state.scene.image.onload = transitionScene;
     } else {
         // init scene immediately
         transitionScene();

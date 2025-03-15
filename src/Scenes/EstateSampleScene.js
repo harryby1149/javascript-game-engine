@@ -6,6 +6,8 @@
 
  import {exploration} from "../Gameplay/Exploration/ExplorationControls"
  
+ "use strict"
+
  export const estateSample = {
     id: 'estateSample', 
     url:"http://localhost:3000/Maps/Estate-Map-Example.jpg",
@@ -53,5 +55,10 @@
     mapBounds: [
         [260, 300, 300, 360]
     ],
+    mapType: 0,
+    image: ()=>{
+        const imageElement = new Image()
+        imageElement.src = this.url 
+    }, 
     mode: exploration,
 }

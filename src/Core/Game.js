@@ -1,11 +1,11 @@
 import {state} from "./State";
-import {draw} from "./Draw";
+import {draw} from "./Draw/Draw";
 
 
 export const gameLoop = () => {
     state.frameCount++
-    state.mode.calcChanges();
-    draw.drawItemLayer();
+    state.scene.mode.calcChanges();
+    // draw.drawItemLayer();
     if(state.scrollMap){
         draw.drawMapLayer();
     }
